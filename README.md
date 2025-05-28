@@ -1,0 +1,1 @@
+This is a small repo to add some go projects to discover the language !
