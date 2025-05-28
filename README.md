@@ -1,5 +1,7 @@
-# This is a small repo to add some go projects to discover the language !
+# Repo overview
 
-## First project : ls_lib !
+This is a small repo to add some go projects to discover the language !
 
-If you want to be able to use it from anywhere in your computer, just run : sudo mv myls /usr/local/bin/.
+## First project : ls_lib !
+
+If yoiu want to be able to use it from anywhere in your computer, just run : sudo mv myls /usr/local/bin/.
