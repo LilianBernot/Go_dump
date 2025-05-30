@@ -1,4 +1,4 @@
-module mychat
+module github.com/LilianBernot/mychat
 
 go 1.24.3
 
