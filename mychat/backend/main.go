@@ -2,31 +2,34 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/LilianBernot/mychat/pkg/websocket"
 )
 
-func serveWS(w http.ResponseWriter, r *http.Request) {
-	fmt.Println(r.Host)
-
-	// Upgrade the connaction to a websocket
-	ws, err := websocket.Upgrade(w, r)
+func serveWS(pool *websocket.Pool, w http.ResponseWriter, r *http.Request) {
+	fmt.Println("WebSocket Endpoint Hit")
+	conn, err := websocket.Upgrade(w, r)
 	if err != nil {
-		log.Println(err)
+		fmt.Fprintf(w, "%+v\n", err)
 	}
-	go websocket.Writer(ws)
 
-	// listen indefinitely for new messages coming
-	websocket.Reader(ws)
+	client := &websocket.Client{
+		Conn: conn,
+		Pool: pool,
+	}
+
+	pool.Register <- client
+	client.Read()
 }
 
 func setupRoutes() {
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Simple Server")
+	pool := websocket.NewPool()
+	go pool.Start()
+
+	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
+		serveWS(pool, w, r)
 	})
-	http.HandleFunc("/ws", serveWS)
 }
 
 func main() {
