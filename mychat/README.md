@@ -2,6 +2,14 @@
 
 The project comes from the following tutorial : https://tutorialedge.net/projects/chat-system-in-go-and-react/.
 
+## Run the project
+
+You need to run both : 
+- The front : go to frontend and `run npm start`
+- The back : go to backend and run `go run .`
+- Access to localhost://3000
+You need to have React and Go installed on your machine.
+
 
 ## The WebSocket Protocol
 
