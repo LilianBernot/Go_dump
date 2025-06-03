@@ -60,7 +60,7 @@ func getDotFilePath() string {
 }
 
 func openFile(filePath string) *os.File {
-	file, err := os.Open(".test")
+	file, err := os.Open(filePath)
 	if err != nil {
 		if os.IsNotExist(err) {
 			_, err = os.Create(filePath)

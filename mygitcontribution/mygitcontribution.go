@@ -2,12 +2,7 @@ package main
 
 import (
 	"flag"
-	"fmt"
 )
-
-func stats(email string) {
-	fmt.Print("stats\n")
-}
 
 func main() {
 	var folder string
