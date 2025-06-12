@@ -22,12 +22,26 @@ body {
 }
 
 .game-title {
-    font-size: 32px;
-    color: #FFD700;
-    margin-bottom: 10px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 24px;
+    margin-bottom: 15px;
     text-transform: uppercase;
     letter-spacing: 2px;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.5);
+    padding: 10px 20px;
+    border: 3px solid #9370DB;
+    border-radius: 10px;
+    background: linear-gradient(45deg, rgba(147, 112, 219, 0.1), rgba(255, 255, 255, 0.1));
+}
+
+.title-purple {
+    color: #9370DB;
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+}
+
+.title-white {
+    color: white;
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
 }
 
 .game-info {
@@ -76,11 +90,11 @@ canvas {
     padding: 20px;
     border-radius: 10px;
     background-color: rgba(0, 0, 0, 0.9);
-    border: 2px solid #FFD700;
+    border: 2px solid #9370DB;
 }
 
 .game-over-content h2 {
-    color: #FFD700;
+    color: #9370DB;
     font-size: 36px;
     margin: 0 0 20px 0;
     text-transform: uppercase;
