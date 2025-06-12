@@ -1,6 +1,7 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const scoreElement = document.getElementById('scoreValue');
+const timerElement = document.getElementById('timerValue');
 
 // Set canvas size
 canvas.width = 400;
@@ -12,6 +13,9 @@ const gridSize = 20;
 const pacmanSize = 15;
 const dotSize = 4;
 const wallSize = gridSize;
+const gameTime = 30; // 30 seconds game time
+let timeLeft = gameTime;
+let gameOver = false;
 
 // Pacman properties
 const pacman = {
@@ -167,27 +171,49 @@ function drawWalls() {
     });
 }
 
+function updateTimer() {
+    if (!gameOver) {
+        timeLeft -= 1/60; // Decrease by 1/60th of a second (assuming 60fps)
+        if (timeLeft <= 0) {
+            timeLeft = 0;
+            gameOver = true;
+        }
+        // Update the timer display in the header
+        timerElement.textContent = Math.ceil(timeLeft);
+    }
+}
+
 function gameLoop() {
     // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // Update game state
-    updatePacman();
-    checkDotCollision();
+    if (!gameOver) {
+        updatePacman();
+        checkDotCollision();
+        updateTimer();
+    }
 
     // Draw game elements
     drawWalls();
     drawDots();
     drawPacman();
 
-    // Check if all dots are eaten
+    // Check win/lose conditions
     const allDotsEaten = dots.every(dot => dot.eaten);
     if (allDotsEaten) {
         ctx.fillStyle = 'white';
         ctx.font = '30px Arial';
         ctx.textAlign = 'center';
         ctx.fillText('You Win!', canvas.width / 2, canvas.height / 2);
-        return;
+        gameOver = true;
+    } else if (gameOver) {
+        ctx.fillStyle = 'white';
+        ctx.font = '30px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('Game Over!', canvas.width / 2, canvas.height / 2);
+        ctx.font = '20px Arial';
+        ctx.fillText(`Final Score: ${score}`, canvas.width / 2, canvas.height / 2 + 40);
     }
 
     // Continue game loop
