@@ -58,8 +58,15 @@ body {
 
 .timer {
     font-size: 20px;
-    color: #FFD700;
+    color: white;
     font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.clock-icon {
+    filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.5));
 }
 
 canvas {

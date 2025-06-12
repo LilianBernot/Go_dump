@@ -83,8 +83,9 @@ function generateDots() {
         [possiblePositions[i], possiblePositions[j]] = [possiblePositions[j], possiblePositions[i]];
     }
     
-    // Create exactly 10 slow dots and 10 speed boost dots
+    // Create exactly 10 slow dots, 10 speed boost dots, and 5 golden dots
     const numSpecialDots = 10;
+    const numGoldenDots = 5;
     for (let i = 0; i < possiblePositions.length; i++) {
         const pos = possiblePositions[i];
         let dotType = 'normal';
@@ -92,6 +93,8 @@ function generateDots() {
             dotType = 'slow';
         } else if (i < numSpecialDots * 2) {
             dotType = 'boost';
+        } else if (i < numSpecialDots * 2 + numGoldenDots) {
+            dotType = 'golden';
         }
         dots.push({
             x: pos.x,
@@ -190,7 +193,8 @@ function checkDotCollision() {
             
             if (distance < pacmanSize) {
                 dot.eaten = true;
-                score += 10;
+                // Double points for golden dots
+                score += dot.type === 'golden' ? 20 : 10;
                 scoreElement.textContent = score;
                 
                 // Apply speed effects based on dot type
@@ -272,6 +276,9 @@ function drawDots() {
                     break;
                 case 'boost':
                     ctx.fillStyle = '#9370DB'; // Purple for speed boost dots
+                    break;
+                case 'golden':
+                    ctx.fillStyle = '#FFD700'; // Gold for double points
                     break;
                 default:
                     ctx.fillStyle = 'white'; // White for normal dots

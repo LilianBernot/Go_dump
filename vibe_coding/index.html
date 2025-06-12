@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pacman Game</title>
+    <title>PacDog Game</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
@@ -13,11 +13,18 @@
     <div class="game-container">
         <div class="game-header">
             <div class="game-title">
-                <span class="title-purple">Data</span><span class="title-white">Dog</span>
+                <span class="title-purple">Pac</span><span class="title-white">Dog</span>
             </div>
             <div class="game-info">
                 <div class="score">Score: <span id="scoreValue">0</span></div>
-                <div class="timer">Time: <span id="timerValue">30</span>s</div>
+                <div class="timer">
+                    <svg class="clock-icon" viewBox="0 0 24 24" width="20" height="20">
+                        <circle cx="12" cy="12" r="10" fill="none" stroke="#9370DB" stroke-width="2"/>
+                        <line x1="12" y1="12" x2="12" y2="8" stroke="#9370DB" stroke-width="2" stroke-linecap="round"/>
+                        <line x1="12" y1="12" x2="16" y2="12" stroke="#9370DB" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    Time: <span id="timerValue">30</span>s
+                </div>
             </div>
         </div>
         <canvas id="gameCanvas"></canvas>
