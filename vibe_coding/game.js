@@ -207,15 +207,57 @@ function checkDotCollision() {
 }
 
 function drawPacman() {
-    ctx.beginPath();
-    const startAngle = (pacman.direction * 90 + 30 + pacman.mouthOpen * 60) * Math.PI / 180;
-    const endAngle = (pacman.direction * 90 - 30 - pacman.mouthOpen * 60) * Math.PI / 180;
+    ctx.save();
+    ctx.translate(pacman.x, pacman.y);
     
-    ctx.arc(pacman.x, pacman.y, pacmanSize, startAngle, endAngle);
-    ctx.lineTo(pacman.x, pacman.y);
-    ctx.fillStyle = 'yellow';
+    // Rotate based on direction
+    const rotation = (pacman.direction * 90) * Math.PI / 180;
+    ctx.rotate(rotation);
+
+    // Draw dog head (white)
+    ctx.beginPath();
+    ctx.fillStyle = 'white';
+    
+    // Main head shape
+    ctx.arc(0, 0, pacmanSize, 0, Math.PI * 2);
     ctx.fill();
-    ctx.closePath();
+    
+    // Snout
+    ctx.beginPath();
+    ctx.ellipse(pacmanSize * 0.4, 0, pacmanSize * 0.5, pacmanSize * 0.4, 0, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Ears
+    ctx.beginPath();
+    ctx.moveTo(-pacmanSize * 0.3, -pacmanSize * 0.5);
+    ctx.lineTo(-pacmanSize * 0.6, -pacmanSize * 0.8);
+    ctx.lineTo(-pacmanSize * 0.3, -pacmanSize * 0.3);
+    ctx.fill();
+    
+    ctx.beginPath();
+    ctx.moveTo(-pacmanSize * 0.3, pacmanSize * 0.5);
+    ctx.lineTo(-pacmanSize * 0.6, pacmanSize * 0.8);
+    ctx.lineTo(-pacmanSize * 0.3, pacmanSize * 0.3);
+    ctx.fill();
+
+    // Draw purple details
+    ctx.fillStyle = '#9370DB';
+    
+    // Eyes
+    ctx.beginPath();
+    ctx.arc(pacmanSize * 0.2, -pacmanSize * 0.2, pacmanSize * 0.15, 0, Math.PI * 2);
+    ctx.fill();
+    
+    ctx.beginPath();
+    ctx.arc(pacmanSize * 0.2, pacmanSize * 0.2, pacmanSize * 0.15, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Nose
+    ctx.beginPath();
+    ctx.arc(pacmanSize * 0.7, 0, pacmanSize * 0.2, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
 }
 
 function drawDots() {
@@ -242,7 +284,7 @@ function drawDots() {
 
 function drawWalls() {
     walls.forEach(wall => {
-        ctx.fillStyle = '#0000FF';
+        ctx.fillStyle = '#9370DB';
         ctx.fillRect(wall.x, wall.y, wallSize, wallSize);
     });
 }
