@@ -2,6 +2,9 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const scoreElement = document.getElementById('scoreValue');
 const timerElement = document.getElementById('timerValue');
+const gameOverOverlay = document.getElementById('gameOverOverlay');
+const gameOverText = document.getElementById('gameOverText');
+const finalScoreElement = document.getElementById('finalScore');
 
 // Set canvas size
 canvas.width = 400;
@@ -16,11 +19,16 @@ const wallSize = gridSize;
 const gameTime = 30; // 30 seconds game time
 let timeLeft = gameTime;
 let gameOver = false;
+let speedReductionTimer = 0;
+const speedReductionDuration = 4; // 4 seconds of speed reduction
+let speedBoostTimer = 0;
+const speedBoostDuration = 4; // 4 seconds of speed boost
 
 // Pacman properties
 const pacman = {
     x: canvas.width / 2,
     y: canvas.height / 2,
+    baseSpeed: 3,
     speed: 3,
     direction: 0, // 0: right, 1: down, 2: left, 3: up
     mouthOpen: 0,
@@ -56,14 +64,41 @@ function generateWalls() {
 const dots = [];
 function generateDots() {
     dots.length = 0;
+    const possiblePositions = [];
+    
+    // First, collect all possible positions
     for (let x = gridSize; x < canvas.width; x += gridSize) {
         for (let y = gridSize; y < canvas.height; y += gridSize) {
             // Don't place dots where walls are
             const isWall = walls.some(wall => wall.x === x && wall.y === y);
             if (!isWall) {
-                dots.push({ x, y, eaten: false });
+                possiblePositions.push({ x, y });
             }
         }
+    }
+    
+    // Shuffle the positions
+    for (let i = possiblePositions.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [possiblePositions[i], possiblePositions[j]] = [possiblePositions[j], possiblePositions[i]];
+    }
+    
+    // Create exactly 10 slow dots and 10 speed boost dots
+    const numSpecialDots = 10;
+    for (let i = 0; i < possiblePositions.length; i++) {
+        const pos = possiblePositions[i];
+        let dotType = 'normal';
+        if (i < numSpecialDots) {
+            dotType = 'slow';
+        } else if (i < numSpecialDots * 2) {
+            dotType = 'boost';
+        }
+        dots.push({
+            x: pos.x,
+            y: pos.y,
+            eaten: false,
+            type: dotType
+        });
     }
 }
 
@@ -124,6 +159,28 @@ function updatePacman() {
     }
 }
 
+function updateSpeedReduction() {
+    if (speedReductionTimer > 0) {
+        speedReductionTimer -= 1/60; // Decrease timer
+        if (speedReductionTimer <= 0) {
+            // Restore normal speed when timer expires
+            pacman.speed = pacman.baseSpeed;
+            speedReductionTimer = 0;
+        }
+    }
+}
+
+function updateSpeedBoost() {
+    if (speedBoostTimer > 0) {
+        speedBoostTimer -= 1/60; // Decrease timer
+        if (speedBoostTimer <= 0) {
+            // Restore normal speed when timer expires
+            pacman.speed = pacman.baseSpeed;
+            speedBoostTimer = 0;
+        }
+    }
+}
+
 function checkDotCollision() {
     dots.forEach(dot => {
         if (!dot.eaten) {
@@ -135,6 +192,15 @@ function checkDotCollision() {
                 dot.eaten = true;
                 score += 10;
                 scoreElement.textContent = score;
+                
+                // Apply speed effects based on dot type
+                if (dot.type === 'slow') {
+                    pacman.speed = pacman.baseSpeed / 4;
+                    speedReductionTimer = speedReductionDuration;
+                } else if (dot.type === 'boost') {
+                    pacman.speed = pacman.baseSpeed * 2;
+                    speedBoostTimer = speedBoostDuration;
+                }
             }
         }
     });
@@ -157,7 +223,17 @@ function drawDots() {
         if (!dot.eaten) {
             ctx.beginPath();
             ctx.arc(dot.x, dot.y, dotSize, 0, Math.PI * 2);
-            ctx.fillStyle = 'white';
+            // Set color based on dot type
+            switch(dot.type) {
+                case 'slow':
+                    ctx.fillStyle = '#FF69B4'; // Pink for slow dots
+                    break;
+                case 'boost':
+                    ctx.fillStyle = '#9370DB'; // Purple for speed boost dots
+                    break;
+                default:
+                    ctx.fillStyle = 'white'; // White for normal dots
+            }
             ctx.fill();
             ctx.closePath();
         }
@@ -183,6 +259,13 @@ function updateTimer() {
     }
 }
 
+function showGameOver(isWin) {
+    gameOver = true;
+    gameOverText.textContent = isWin ? 'You Win!' : 'Game Over!';
+    finalScoreElement.textContent = `Final Score: ${score}`;
+    gameOverOverlay.classList.add('visible');
+}
+
 function gameLoop() {
     // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -192,6 +275,8 @@ function gameLoop() {
         updatePacman();
         checkDotCollision();
         updateTimer();
+        updateSpeedReduction();
+        updateSpeedBoost();
     }
 
     // Draw game elements
@@ -202,18 +287,9 @@ function gameLoop() {
     // Check win/lose conditions
     const allDotsEaten = dots.every(dot => dot.eaten);
     if (allDotsEaten) {
-        ctx.fillStyle = 'white';
-        ctx.font = '30px Arial';
-        ctx.textAlign = 'center';
-        ctx.fillText('You Win!', canvas.width / 2, canvas.height / 2);
-        gameOver = true;
-    } else if (gameOver) {
-        ctx.fillStyle = 'white';
-        ctx.font = '30px Arial';
-        ctx.textAlign = 'center';
-        ctx.fillText('Game Over!', canvas.width / 2, canvas.height / 2);
-        ctx.font = '20px Arial';
-        ctx.fillText(`Final Score: ${score}`, canvas.width / 2, canvas.height / 2 + 40);
+        showGameOver(true);
+    } else if (gameOver && !gameOverOverlay.classList.contains('visible')) {
+        showGameOver(false);
     }
 
     // Continue game loop
